@@ -2,7 +2,7 @@
 import kivy
 kivy.require('1.0.7')
 
-from os.path import dirname, isdir, join
+from os.path import dirname, isdir, join, exists
 from kivy.animation import Animation
 from kivy.app import App
 from kivy.clock import Clock
@@ -150,8 +150,8 @@ class Slides(FloatLayout):
         self.time += dt
 
     def on_keyboard(self, instance, scancode, *largs):
-        # page down
-        if scancode == 281:
+        # down
+        if scancode == 273:
             self.old_index = self.index
             for index in xrange(self.index+1, self.max_index):
                 slide = self.slides[index]
@@ -159,8 +159,8 @@ class Slides(FloatLayout):
                     self.index = index
                     return True
             return True
-        # page up
-        if scancode == 280:
+        # up
+        if scancode == 274:
             self.old_index = self.index
             for index in xrange(self.index-1, -1, -1):
                 slide = self.slides[index]
@@ -224,6 +224,9 @@ class SlidesViewer(App):
             directory = dirname(filename)
         sys.path += [directory]
         resource_add_path(directory)
+        template_fn = join(directory, 'templates.kv')
+        if exists(template_fn):
+            Builder.load_file(template_fn)
         return Builder.load_file(filename)
 
 Factory.register('SlideShaderContainer', cls=SlideShaderContainer)
