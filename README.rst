@@ -83,13 +83,15 @@ Then, in the `presentation.kv`, you can use it like that::
     #!/usr/bin/env kary
     #:kivy 1.0
 
-    <Slides>:
-        <SlideContent>:
+    Slides:
+
+        SlideContent:
             title: 'Hello world'
             content:
                 ('This is the first line\n',
                 'This is the second line')
-        <SlideContent>:
+
+        SlideContent:
             title: 'My last slide'
             content: ('Any questions ?, )
 
