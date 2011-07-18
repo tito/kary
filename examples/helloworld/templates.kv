@@ -1,0 +1,80 @@
+#:kivy 1.0
+
+# Little background
+<SlidesBackground>:
+	canvas:
+		Color:
+			rgb: 1, 1, 1
+		Rectangle:
+			source: 'background.png'
+			pos: self.pos
+			size: self.size
+
+# Foreground for displaying a subtitle of the presentation
+# + current slide number + total slide number
+<SlidesForeground>:
+	GridLayout:
+		pos: root.pos
+		rows: 1
+		size_hint_y: None
+		height: 35
+		canvas:
+			Color:
+				rgba: 0, 0, 0, .2
+			Rectangle:
+				pos: self.pos
+				size: self.size
+			Color:
+				rgba: 1, 1, 1, .1
+			Rectangle:
+				pos: self.x, self.y + 34
+				size: self.width * float(root.slides.scroll_x), 2
+		Label:
+			text: 'My presentation'
+		Label:
+			text: '%d / %d' % (root.slides.index + 1, root.slides.max_index)
+
+#
+# Templates
+#
+
+# Title template for creating an "header" title
+[Title@Label]:
+	text: ctx.text
+	text_size: self.width - 60, None
+	halign: 'left'
+	size_hint_y: None
+	height: 100
+	font_size: 36
+	canvas.before:
+		Color:
+			rgba: 0, 0, 0, .2
+		Rectangle:
+			pos: self.pos
+			size: self.size
+
+# Template for displaying a title + content
+[SlideContent@Slide]:
+	GridLayout:
+		pos: root.pos
+		cols: 1
+		Title:
+			text: ctx.title
+		BoxLayout:
+			padding: 50
+			Label:
+				text: ''.join(ctx.content)
+				font_size: ctx.get('font_size', 36)
+				text_size: self.width, None
+
+# Template for displaying a title + image
+[SlideImage@Slide]:
+	GridLayout:
+		pos: root.pos
+		cols: 1
+		Title:
+			text: ctx.title
+		BoxLayout:
+			padding: 50
+			Image:
+				source: ctx.source
