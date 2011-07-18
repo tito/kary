@@ -67,18 +67,9 @@ void main (void) {
 }
 '''
 
-class SlidesBackground(FloatLayout):
-    slides = ObjectProperty(None)
-
-class SlidesForeground(FloatLayout):
-    slides = ObjectProperty(None)
-
-class Slide(FloatLayout):
-    is_section = BooleanProperty(False)
-    title = StringProperty(None)
-    active = BooleanProperty(False)
-
 class SlideShaderContainer(FloatLayout):
+    # (internal) This class is used to animate Slide instance.
+
     alpha = NumericProperty(0.)
     fbo = ObjectProperty(None)
     fbo_texture = ObjectProperty(None, allownone=True)
@@ -125,13 +116,61 @@ class SlideShaderContainer(FloatLayout):
         self.canvas['alpha'] = float(self.alpha)
         self.canvas['size'] = map(float, self.size)
 
+
+class SlidesBackground(FloatLayout):
+    '''Widget used as a background of :class:`Slides` instance.
+    '''
+
+    #: Property that will contain the Slides instance
+    slides = ObjectProperty(None)
+
+
+class SlidesForeground(FloatLayout):
+    '''Widget used as a foreground of :class:`Slides` instance.
+    '''
+
+    #: Property that will contain the Slides instance
+    slides = ObjectProperty(None)
+
+
+class Slide(FloatLayout):
+    '''Base for creating Slide template.
+    '''
+
+    #: Property that indicate if this slide should be considered as a new
+    #: section or not.
+    is_section = BooleanProperty(False)
+
+    #: Property that indicate the title of the Slide
+    title = StringProperty(None)
+
+    #: Indicate if this slide is currently showed on the screen or not
+    active = BooleanProperty(False)
+
+
 class Slides(FloatLayout):
+    '''Root widget that must be used for creating a presentation.
+    '''
+
+    #: Current Slide to show
     container1 = ObjectProperty(None)
+
+    #: Previous Slide showed
     container2 = ObjectProperty(None)
+
+    #: Index of the previous slide
     old_index = NumericProperty(-1)
+
+    #: Index of the current slide
     index = NumericProperty(0)
+
+    #: Value of the current scrolling (between 0 to 1)
     scroll_x = NumericProperty(0)
+
+    #: Contain the Clock.boottime(). Can be used for doing animation
     time = NumericProperty(0)
+
+    #: Maximum available index
     max_index = NumericProperty(0)
 
     def __init__(self, **kwargs):
@@ -214,7 +253,11 @@ class Slides(FloatLayout):
             Animation(alpha=-d, d=.3, t='out_quad').start(self.container1)
             self.slides[old_index].active = False
 
+
 class SlidesViewer(App):
+    # Application for loading automatically the presentation
+    # and contruct the user interface.
+
     def build(self):
         filename = self.options['filename']
         if isdir(filename):
@@ -229,11 +272,15 @@ class SlidesViewer(App):
             Builder.load_file(template_fn)
         return Builder.load_file(filename)
 
-Factory.register('SlideShaderContainer', cls=SlideShaderContainer)
+
+# Register some class to be used inside Kivy
 Factory.register('Slides', cls=Slides)
 Factory.register('SlidesBackground', cls=SlidesBackground)
 Factory.register('SlidesForeground', cls=SlidesForeground)
 Factory.register('Slide', cls=Slide)
+
+# internal only
+Factory.register('SlideShaderContainer', cls=SlideShaderContainer)
 
 if __name__ == '__main__':
     import sys
