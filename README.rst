@@ -101,7 +101,6 @@ Then, open a terminal, and type::
 
 And your presentation will be opened !
 
-
 Keyboard shortcuts
 ------------------
 
