@@ -27,8 +27,10 @@ Builder.load_string('''
 <Slides>:
 	container1: container1
 	container2: container2
+    containerb: containerb
 
     SlidesBackground:
+        id: containerb
         slides: root
 
 	SlideShaderContainer:
@@ -42,10 +44,6 @@ Builder.load_string('''
 		size_hint_y: None
 		height: root.height - 35
 		y: 35
-
-    SlidesForeground:
-        slides: root
-
 
 <Slide>:
 	pos_hint: {'x': 0, 'y': 0}
@@ -124,6 +122,9 @@ class SlidesBackground(FloatLayout):
     #: Property that will contain the Slides instance
     slides = ObjectProperty(None)
 
+    #: Time
+    time = NumericProperty(0)
+
 
 class SlidesForeground(FloatLayout):
     '''Widget used as a foreground of :class:`Slides` instance.
@@ -158,6 +159,9 @@ class Slides(FloatLayout):
     #: Previous Slide showed
     container2 = ObjectProperty(None)
 
+    #: Previous Slide showed
+    containerb = ObjectProperty(None)
+
     #: Index of the previous slide
     old_index = NumericProperty(-1)
 
@@ -179,6 +183,7 @@ class Slides(FloatLayout):
         Window.bind(on_keyboard=self.on_keyboard)
         Clock.schedule_interval(self.increase_time, 1 / 30.)
         Clock.schedule_once(self.init, 0)
+        self.add_widget(SlidesForeground(slides=self))
 
     def init(self, dt):
         index = self.index
@@ -187,6 +192,7 @@ class Slides(FloatLayout):
 
     def increase_time(self, dt):
         self.time += dt
+        self.containerb.time = self.time
 
     def on_keyboard(self, instance, scancode, *largs):
         # down
